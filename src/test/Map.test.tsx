@@ -2,17 +2,11 @@
  * @vitest-environment jsdom
  */
 
-const mockMap = {
-  on: vi.fn(),
-  remove: vi.fn(),
-  fire: vi.fn(),
-};
-
-const mockMarker = {
-  setLngLat: vi.fn().mockReturnThis(),
-  addTo: vi.fn().mockReturnThis(),
-  remove: vi.fn(),
-};
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, act } from '@testing-library/react';
+import { Map } from '../components/Map';
+import { useGameStore } from '../store/gameStore';
+import { mockMap, mockMarker, mockCoordinates, resetGameStore } from './utils/testUtils';
 
 vi.mock('maplibre-gl', async () => ({
   default: {
@@ -21,15 +15,10 @@ vi.mock('maplibre-gl', async () => ({
   },
 }));
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, act } from '@testing-library/react';
-import { Map } from '../components/Map';
-import { useGameStore } from '../store/gameStore';
-
 describe('Map', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    useGameStore.setState({ map: null, pendingHQ: null });
+    resetGameStore();
   });
 
   it('renders map container', () => {
@@ -51,21 +40,17 @@ describe('Map', () => {
   });
 
   it('handles map click and updates pendingHQ', async () => {
-    const mockCoords = { lng: 2.3522, lat: 48.8566 };
     render(<Map />);
     
     await act(async () => {
-      // Simulate click handler
       const clickHandler = mockMap.on.mock.calls.find(call => call[0] === 'click')[1];
-      await clickHandler({ lngLat: mockCoords });
+      await clickHandler({ lngLat: mockCoordinates });
     });
     
-    // Verify state update
     const state = useGameStore.getState();
-    expect(state.pendingHQ).toEqual(mockCoords);
+    expect(state.pendingHQ).toEqual(mockCoordinates);
     
-    // Verify marker creation
-    expect(mockMarker.setLngLat).toHaveBeenCalledWith([mockCoords.lng, mockCoords.lat]);
+    expect(mockMarker.setLngLat).toHaveBeenCalledWith([mockCoordinates.lng, mockCoordinates.lat]);
     expect(mockMarker.addTo).toHaveBeenCalledWith(mockMap);
   });
 }); 
