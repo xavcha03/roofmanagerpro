@@ -1,54 +1,127 @@
-# React + TypeScript + Vite
+# 🏢 RoofManager Pro
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Application de gestion immobilière avec visualisation cartographique interactive.
 
-Currently, two official plugins are available:
+## 🚀 Fonctionnalités
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Carte Interactive** : Visualisation MapLibre avec sélection du QG
+- **Interface Utilisateur Moderne** : UI responsive avec Tailwind CSS
+- **Gestion d'État** : Utilisation de Zustand pour un état global efficace
+- **Tests Complets** : Couverture de tests unitaires et d'intégration
 
-## Expanding the ESLint configuration
+## 🛠️ Technologies Utilisées
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Frontend** :
+  - React 18
+  - TypeScript
+  - Vite
+  - Tailwind CSS
+  - MapLibre GL JS
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+- **Tests** :
+  - Vitest
+  - React Testing Library
+  - Jest DOM
+
+- **Outils de Développement** :
+  - ESLint
+  - Prettier
+  - PostCSS
+
+## 📋 Prérequis
+
+- Node.js (v18 ou supérieur)
+- npm ou yarn
+- Clé API MapTiler (pour la cartographie)
+
+## 🚀 Installation
+
+1. **Cloner le dépôt**
+   ```bash
+   git clone git@github.com:xavcha03/roofmanagerpro.git
+   cd roofmanagerpro
+   ```
+
+2. **Installer les dépendances**
+   ```bash
+   npm install
+   ```
+
+3. **Configurer les variables d'environnement**
+   - Copier le fichier `.env.example` en `.env`
+   - Ajouter votre clé API MapTiler :
+     ```
+     VITE_MAPTILER_API_KEY=votre_clé_api
+     ```
+
+4. **Lancer l'application en développement**
+   ```bash
+   npm run dev
+   ```
+
+## 🧪 Tests
+
+- **Lancer tous les tests**
+  ```bash
+  npm test
+  ```
+
+- **Lancer les tests avec couverture**
+  ```bash
+  npm run test:coverage
+  ```
+
+- **Lancer les tests en mode watch**
+  ```bash
+  npm run test:watch
+  ```
+
+## 📝 Scripts Disponibles
+
+- `npm run dev` : Lance le serveur de développement
+- `npm run build` : Compile l'application pour la production
+- `npm run preview` : Prévisualise la version de production
+- `npm run lint` : Vérifie le code avec ESLint
+- `npm run format` : Formate le code avec Prettier
+- `npm test` : Lance les tests
+- `npm run type-check` : Vérifie les types TypeScript
+
+## 🌳 Structure du Projet
+
+```
+roofmanagerpro/
+├── public/
+├── src/
+│   ├── assets/
+│   │   ├── components/
+│   │   │   ├── Map.tsx
+│   │   │   ├── UI.tsx
+│   │   │   └── ConfirmHQDialog.tsx
+│   │   ├── store/
+│   │   │   └── gameStore.ts
+│   │   └── test/
+│   │       ├── App.test.tsx
+│   │       ├── Map.test.tsx
+│   │       ├── UI.test.tsx
+│   │       └── ConfirmHQDialog.test.tsx
+│   ├── .env
+│   ├── .eslintrc.json
+│   ├── .prettierrc
+│   └── package.json
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🤝 Contribution
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+1. Forker le projet
+2. Créer une branche pour votre fonctionnalité (`git checkout -b feature/AmazingFeature`)
+3. Commiter vos changements (`git commit -m 'Add some AmazingFeature'`)
+4. Pousser sur la branche (`git push origin feature/AmazingFeature`)
+5. Ouvrir une Pull Request
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+## 📜 Licence
+
+Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
+
+## ✨ Auteurs
+
+- Xavier Charpentier - [GitHub](https://github.com/xavcha03)
