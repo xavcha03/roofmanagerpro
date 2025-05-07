@@ -13,11 +13,21 @@ export const PhoneIcon = ({ onAccept }: PhoneIconProps = {}) => {
     if (incoming && !audioRef.current) {
       audioRef.current = new Audio('/call.mp3');
       audioRef.current.volume = 0.2;
-      audioRef.current.play();
+      const playPromise = audioRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // Ignore les erreurs de lecture audio dans les tests
+        });
+      }
     }
     return () => {
       if (audioRef.current) {
-        audioRef.current.pause();
+        const pausePromise = audioRef.current.pause();
+        if (pausePromise !== undefined) {
+          pausePromise.catch(() => {
+            // Ignore les erreurs de pause audio dans les tests
+          });
+        }
         audioRef.current = null;
       }
     };
@@ -25,16 +35,25 @@ export const PhoneIcon = ({ onAccept }: PhoneIconProps = {}) => {
 
   if (!incoming) return null;
 
+  const handleClick = async () => {
+    if (audioRef.current) {
+      try {
+        const pausePromise = audioRef.current.pause();
+        if (pausePromise !== undefined) {
+          await pausePromise;
+        }
+      } catch {
+        // Ignore les erreurs de pause audio dans les tests
+      }
+      audioRef.current = null;
+    }
+    acceptCall();
+    onAccept?.();
+  };
+
   return (
     <button
-      onClick={() => {
-        if (audioRef.current) {
-          audioRef.current.pause();
-          audioRef.current = null;
-        }
-        acceptCall();
-        onAccept?.();
-      }}
+      onClick={handleClick}
       className="fixed top-4 right-4 animate-pulse"
       aria-label="Incoming call"
     >

@@ -10,7 +10,10 @@
     "preview": "vite preview",
     "test": "vitest",
     "test:coverage": "vitest run --coverage",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "cypress:open": "cypress open",
+    "cypress:run": "start-server-and-test dev http://localhost:5173 'cypress run'",
+    "test:e2e": "start-server-and-test dev http://localhost:5173 'cypress run'"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.2",
@@ -47,6 +50,7 @@
     "jsdom": "^24.0.0",
     "postcss": "^8.4.35",
     "prettier": "^3.2.5",
+    "start-server-and-test": "^2.0.11",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.2.2",
     "vite": "^5.1.4",

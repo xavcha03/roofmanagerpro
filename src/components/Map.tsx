@@ -11,25 +11,28 @@ console.log('MapTiler API Key:', MAPTILER_API_KEY); // Pour le débogage
 export const Map = () => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const markerRef = useRef<maplibregl.Marker | null>(null);
+  const mapRef = useRef<maplibregl.Map | null>(null);
   const { setMap } = useGameStore();
 
   const handleMapClick = useCallback(
-    debounce((e: maplibregl.MapMouseEvent & { target: maplibregl.Map }) => {
+    (e: maplibregl.MapMouseEvent) => {
       const { lng, lat } = e.lngLat;
       
       if (markerRef.current) {
         markerRef.current.remove();
       }
       
-      markerRef.current = new maplibregl.Marker({
-        color: '#FF0000',
-        draggable: false
-      })
-        .setLngLat([lng, lat])
-        .addTo(e.target);
+      if (mapRef.current) {
+        markerRef.current = new maplibregl.Marker({
+          color: '#FF0000',
+          draggable: false
+        })
+          .setLngLat([lng, lat])
+          .addTo(mapRef.current);
 
-      useGameStore.getState().setPendingHQ(createLngLat(lng, lat));
-    }, 200),
+        useGameStore.getState().setPendingHQ(createLngLat(lng, lat));
+      }
+    },
     []
   );
 
@@ -44,6 +47,10 @@ export const Map = () => {
       antialias: true,
     });
 
+    mapRef.current = map;
+
+    map.addControl(new maplibregl.NavigationControl(), 'top-right');
+
     map.on('click', handleMapClick);
 
     const unsubscribe = useGameStore.subscribe(
@@ -57,6 +64,7 @@ export const Map = () => {
     );
 
     map.on('load', () => {
+      mapContainer.current?.classList.add('map-loaded');
       console.log('Map loaded successfully');
     });
 
@@ -69,7 +77,8 @@ export const Map = () => {
     return () => {
       unsubscribe();
       if (markerRef.current) markerRef.current.remove();
-      map.remove();
+      if (mapRef.current) mapRef.current.remove();
+      mapRef.current = null;
     };
   }, [setMap, handleMapClick]);
 

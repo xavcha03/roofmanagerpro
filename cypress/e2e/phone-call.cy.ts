@@ -5,31 +5,30 @@ describe('Phone Call Feature', () => {
   beforeEach(() => {
     // Intercepte et mock l'appel Audio
     cy.window().then((win) => {
-      cy.stub(win.Audio.prototype, 'play').as('audioPlay');
-      cy.stub(win.Audio.prototype, 'pause').as('audioPause');
+      cy.stub(win.Audio.prototype, 'play').resolves();
+      cy.stub(win.Audio.prototype, 'pause').resolves();
     });
     
     cy.visit('/');
-    
-    // Force l'état incoming à true pour simuler un appel
-    cy.window().then((win) => {
-      // @ts-ignore - On ignore l'erreur car on sait que le store est disponible
-      win.__GAME_STORE__.setState({ incoming: true });
+
+    // Force un délai court pour le test
+    cy.window().then((win: any) => {
+      win.useGameStore.getState().scheduleNextCall(100);
     });
   });
 
   it('shows phone icon and opens quote dialog when clicked', () => {
-    // Vérifie que l'icône est visible
+    // Attend que l'icône apparaisse
     cy.findByRole('button', { name: /incoming call/i }).should('be.visible');
 
     // Clique sur l'icône
     cy.findByRole('button', { name: /incoming call/i }).click();
 
-    // Vérifie que l'icône disparaît
-    cy.findByRole('button', { name: /incoming call/i }).should('not.exist');
-
     // Vérifie que le dialogue s'ouvre
     cy.findByRole('dialog').should('be.visible');
     cy.findByLabelText(/surface/i).should('be.visible');
+
+    // Vérifie que l'icône a disparu
+    cy.findByRole('button', { name: /incoming call/i }).should('not.exist');
   });
 }); 
