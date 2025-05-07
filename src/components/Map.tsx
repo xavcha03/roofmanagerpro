@@ -1,7 +1,9 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useGameStore } from '../store/gameStore';
+import debounce from 'lodash/debounce';
+import { createLngLat } from '../store/types';
 
 const MAPTILER_API_KEY = import.meta.env.VITE_MAPTILER_API_KEY;
 console.log('MapTiler API Key:', MAPTILER_API_KEY); // Pour le débogage
@@ -10,6 +12,26 @@ export const Map = () => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const markerRef = useRef<maplibregl.Marker | null>(null);
   const { setMap } = useGameStore();
+
+  const handleMapClick = useCallback(
+    debounce((e: maplibregl.MapMouseEvent & { target: maplibregl.Map }) => {
+      const { lng, lat } = e.lngLat;
+      
+      if (markerRef.current) {
+        markerRef.current.remove();
+      }
+      
+      markerRef.current = new maplibregl.Marker({
+        color: '#FF0000',
+        draggable: false
+      })
+        .setLngLat([lng, lat])
+        .addTo(e.target);
+
+      useGameStore.getState().setPendingHQ(createLngLat(lng, lat));
+    }, 200),
+    []
+  );
 
   useEffect(() => {
     if (!mapContainer.current) return;
@@ -22,26 +44,8 @@ export const Map = () => {
       antialias: true,
     });
 
-    map.on('click', (e) => {
-      const { lng, lat } = e.lngLat;
-      
-      // Supprimer l'ancien marqueur s'il existe
-      if (markerRef.current) {
-        markerRef.current.remove();
-      }
-      
-      // Créer un nouveau marqueur
-      markerRef.current = new maplibregl.Marker({
-        color: '#FF0000',
-        draggable: false
-      })
-        .setLngLat([lng, lat])
-        .addTo(map);
+    map.on('click', handleMapClick);
 
-      useGameStore.getState().setPendingHQ({ lng, lat });
-    });
-
-    // Nettoyer le marqueur quand le HQ est confirmé ou annulé
     const unsubscribe = useGameStore.subscribe(
       (state) => state.pendingHQ,
       (pendingHQ) => {
@@ -67,7 +71,7 @@ export const Map = () => {
       if (markerRef.current) markerRef.current.remove();
       map.remove();
     };
-  }, [setMap]);
+  }, [setMap, handleMapClick]);
 
   return (
     <div 

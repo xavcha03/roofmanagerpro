@@ -8,6 +8,11 @@ import { Map } from '../components/Map';
 import { useGameStore } from '../store/gameStore';
 import { mockMap, mockMarker, mockCoordinates, resetGameStore } from './utils/testUtils';
 
+// Mock le debounce pour qu'il s'exécute immédiatement dans les tests
+vi.mock('lodash/debounce', () => ({
+  default: (fn: Function) => fn,
+}));
+
 vi.mock('maplibre-gl', async () => ({
   default: {
     Map: vi.fn(() => mockMap),
@@ -44,7 +49,10 @@ describe('Map', () => {
     
     await act(async () => {
       const clickHandler = mockMap.on.mock.calls.find(call => call[0] === 'click')[1];
-      await clickHandler({ lngLat: mockCoordinates });
+      await clickHandler({ 
+        lngLat: mockCoordinates,
+        target: mockMap
+      });
     });
     
     const state = useGameStore.getState();

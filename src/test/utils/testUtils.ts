@@ -1,5 +1,6 @@
 import { vi } from 'vitest';
 import { useGameStore } from '../../store/gameStore';
+import { createLngLat } from '../../store/types';
 
 // Mocks MapLibre
 export const mockMap = {
@@ -24,10 +25,7 @@ export const resetGameStore = () => {
 };
 
 // Coordonnées de test communes
-export const mockCoordinates = {
-  lng: 2.3522,
-  lat: 48.8566,
-};
+export const mockCoordinates = createLngLat(2.3522, 48.8566);
 
 // Helper pour vérifier les styles Tailwind communs
 export const hasCommonButtonStyles = (element: HTMLElement) => {
